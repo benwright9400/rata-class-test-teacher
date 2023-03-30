@@ -5,8 +5,16 @@ import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis } from "rechar
 
 function Setup() {
     const[data, setData] = useState([]);
-    const[questions, setQuestions] = useState([]);
-    // let data = [{name: "10", value: 12}, {name: "20", value: 120}, {name: "30", value: 120}, {name: "40", value: 120}, {name: "40", value: 120}, {name: "50", value: 120},{name: "60", value: 120},{name: "70", value: 120},{name: "80", value: 120},{name: "90", value: 120},{name: "10", value: 120},];
+    const[questions, setQuestions] = useState([])
+    const [count, setCount] = useState(0);
+
+    useEffect(()  => {
+        if(count < 1) {
+            setInterval(getServerData, 2000);
+            getQuestions();
+            setCount(1);
+        }
+    });
 
     async function getServerData() {
         let questions = await getQuestions();
@@ -29,8 +37,6 @@ function Setup() {
         data = await data.json();
         return data;
     }
-
-    setInterval(getServerData, 2000);
         
     return (<div>
             <Card>
