@@ -4,14 +4,35 @@ import React, { useState } from "react";
 import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis } from "recharts";
 
 function Setup() {
-    const [stage, setStage] = useState(0);
+    const[data, setData] = useState([]);
+    const[questions, setQuestions] = useState([]);
+    // let data = [{name: "10", value: 12}, {name: "20", value: 120}, {name: "30", value: 120}, {name: "40", value: 120}, {name: "40", value: 120}, {name: "50", value: 120},{name: "60", value: 120},{name: "70", value: 120},{name: "80", value: 120},{name: "90", value: 120},{name: "10", value: 120},];
 
-    return loadContent(stage, stage, setStage);
-}
+    async function getServerData() {
+        let questions = await getQuestions();
+        let data = await getData();
 
-function loadContent(stageNumber, stage, setStage) {
-    let data = [{name: "10", value: 12}, {name: "20", value: 120}, {name: "30", value: 120}, {name: "40", value: 120}, {name: "40", value: 120}, {name: "50", value: 120},{name: "60", value: 120},{name: "70", value: 120},{name: "80", value: 120},{name: "90", value: 120},{name: "10", value: 120},];
-        return (<div>
+        console.log("data call");
+    
+        setData(data);
+        setQuestions(questions);
+    }
+    
+    async function getQuestions() {
+        let questions = await fetch("http://rita-server.herokuapp.com/questions");
+        questions = await questions.json();
+        return questions
+    }
+    
+    async function getData() {
+        let data = await fetch("http://rita-server.herokuapp.com/questions");
+        data = await data.json();
+        return data;
+    }
+
+    setInterval(getServerData, 2000);
+        
+    return (<div>
             <Card>
                 <div className="flex items-center justify-center flex-auto">
                     <School style={{scale: '1', margin: '0.5rem'}} />
@@ -36,7 +57,9 @@ function loadContent(stageNumber, stage, setStage) {
                     <Card className="h-11/12" style={{height: '80vh'}}>
                         <div className="p-2 h-11/12">
                             <div className="text-left overflow-y-scroll my-2 px-2" style={{height: '70vh'}}>
-                                <p>James: When is this due?</p>
+                                {
+                                    questions.map((question) => <p>{question}</p>)
+                                }
                             </div>
                             <OutlinedInput size="small" style={{width: '100%'}}
                                 autoComplete="off"
